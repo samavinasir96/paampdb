@@ -1,0 +1,29 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+<style>
+    body {
+        margin-top: 250px;
+    }
+    
+    .overlay {
+        margin-top: -100px;
+        margin-bottom: 100px;
+    }
+    
+    iframe {
+        display: block;
+        margin: 0 auto;
+        height: 315px;
+    }
+</style>
+
+<div class="container">
+    <div class="overlay">
+
+
+        <ul>
+
+            <iframe width="600" height="315" src="https://www.youtube.com/embed/ZJGZyinVQjY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </ul>
+    </div>
+</div>
+{% endblock %}

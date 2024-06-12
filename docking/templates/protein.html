@@ -1,0 +1,693 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+    <style>
+        #owl-demo .item img {
+            display: block;
+            width: 100%;
+            height: 310px;
+            object-fit: cover;
+            object-position: center;
+        }
+        
+        hr {
+            border: 1px solid #35718A;
+            margin: 10px 0;
+        }
+        
+        body {
+            padding-top: 150px;
+        }
+        
+        button {
+            background-color: #35718A;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        
+        .headerFont {
+            font-family: "Copperplate Gothic Bold";
+            color: #35718A;
+            font-size: 24px;
+        }
+        
+        a:link,
+        a:visited,
+        a:hover {
+            text-decoration: none;
+        }
+        
+        #container-01,
+        #container-02 {
+            width: 90%;
+            height: 300px;
+            position: relative;
+            left: 10px;
+            top: 10px;
+            bottom: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <table class="table table-striped w-auto">
+        <thead style="background-color: #35718A; color: white;">
+            <tr>
+                <th scope="col" style="font-size: small; font-weight: normal;">Select AMP</th>
+                <th scope="col" style="font-size: small; font-weight: normal;">AMP Name</th>
+                <th scope="col" style="font-size: small; font-weight: normal;">AMP-Sequence</th>
+                <th scope="col" style="font-size: small; font-weight: normal; padding-left: 20px;">Selected Target Protein</th>
+                <th scope="col" style="font-size: small; font-weight: normal;">Export Results</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-info">
+                <td>AMP{{ protein.id }}</td>
+                <td>{{ protein.name }}</td>
+                <td>{{ protein.sequence }}</td>
+                <td>{{ protein.target_protein }}</td>
+                <td>
+                    <button onclick="exportTableToCSV('table-data.csv')" style="background-color: #f9f9f9; font-size: 28px; margin: 0; padding: 0;"><i class="fas fa-file-csv" style="color: rgb(17, 44, 35); margin-top: -10px;"></i></button>
+                    <button onclick="exportTableToXML('table-data.xml')" style="background-color: #f9f9f9; font-size: 28px; margin: 0; padding: 0;"><i class="fas fa-file-code" style="color: rgb(34, 26, 145); margin-top: -10px;"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-20">
+            <div class="panel panel-primary">
+                <div class="panel-heading" align="center" style="background-color: #006dc1;">
+                    3D Structure of AMPs & Physicochemical Parameters
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>{{ protein.amp }}</h3>
+
+    <div class="row">
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <div class="panel panel-default" style="height: 400px;">
+                <div class="panel-heading">{{ protein.name }}</div>
+                <div>
+                    <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+                    <div id="container-01" class="mol-container"></div>
+                    <div>
+                        <a style="background-color: #35718A; color: #f9f9f9; margin: 20px; margin-left: 3px;" role="button" href='/static/amp-pdb/{{ protein.pdb_name }}' download='/static/amp-pdb/{{ protein.pdb_name }}' class="btn btn-light text-dark ml-0">
+                            Download PDB
+                        </a>
+                    </div>
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+                    <script>
+                        jQuery(function () {
+                            let element = jQuery("#container-01");
+                            let config = { backgroundColor: "White" };
+                            let viewer = $3Dmol.createViewer(element, config);
+                            let pdbUri = '/static/amp-pdb/{{ protein.pdb_name }}';
+                            jQuery.ajax(pdbUri, {
+                                success: function (data) {
+                                    let v = viewer;
+                                    v.addModel(data, "pdb"); /* load data */
+                                    v.setStyle({}, { cartoon: { color: "#de9a1f" } }); /* style all atoms */
+                                    v.zoomTo(); /* set camera */
+                                    v.render(); /* render scene */
+                                    v.zoom(1.2, 1000); /* slight zoom */
+                                },
+                                error: function (hdr, status, err) {
+                                    console.error("Failed to load PDB " + pdbUri + ": " + err);
+                                },
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 col-sm-8 col-xs-12">
+            <div class="panel panel-success" style="height: 400px; overflow: scroll;">
+                <div class="panel-heading">Physiochemical Properties</div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Property</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sequence</td>
+                                    <td>{{ protein.sequence }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Source</td>
+                                    <td>{{ protein.source }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Tiny</td>
+                                    <td>{{ protein.tiny_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Small</td>
+                                    <td>{{ protein.small_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Aliphatic</td>
+                                    <td>{{ protein.aliphatic_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Aromatic</td>
+                                    <td>{{ protein.aromatic_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Non-Polar</td>
+                                    <td>{{ protein.nonpolar_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Polar</td>
+                                    <td>{{ protein.polar_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Charged Number</td>
+                                    <td>{{ protein.charged_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Basic Number</td>
+                                    <td>{{ protein.basic_number  }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Acidic Number</td>
+                                    <td>{{ protein.acidic_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Mole% Tiny</td>
+                                    <td>{{ protein.tiny_mole }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Mole% Small</td>
+                                    <td>{{ protein.small_mole }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Mole% Aliphatic</td>
+                                    <td>{{ protein.aliphatic_mole }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Mole% Aromatic</td>
+                                    <td>{{ protein.aromatic_mole }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Mole% Non-Polar</td>
+                                    <td>{{ protein.nonpolar_mole }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Mole% Polar</td>
+                                    <td>{{ protein.polar_mole }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Mole% Charged</td>
+                                    <td>{{ protein.charged_mole }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Mole% Basic</td>
+                                    <td>{{ protein.basic_mole }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Mole% Acidic</td>
+                                    <td>{{ protein.acidic_mole }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Molecular Weight</td>
+                                    <td>{{ protein.molecular_weight }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Length</td>
+                                    <td>{{ protein.length }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Antigenic</td>
+                                    <td>{{ protein.antigenic }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Isoelectric Point</td>
+                                    <td>{{ protein.isoelectric_point }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Toxicity</td>
+                                    <td>{{ protein.toxicity }}</td>
+                                </tr>
+                                <tr>
+                                    <td>CPP</td>
+                                    <td>{{ protein.cpp }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Charge</td>
+                                    <td>{{ protein.charge }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Hydrophobicity</td>
+                                    <td>{{ protein.hydrophobicity }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Aliphatic Index</td>
+                                    <td>{{ protein.aliphatic_index }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Instability Index</td>
+                                    <td>{{ protein.instability_index }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Hydrophobicity</td>
+                                    <td>{{ protein.hydrophobicity }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Hydrophobic Moment</td>
+                                    <td>{{ protein.hydrophobic_moment }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Boman Index</td>
+                                    <td>{{ protein.boman_index }}</td>
+                                </tr>
+                                <tr>
+                                    <td>HP</td>
+                                    <td>{{ protein.hp }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Antimicrobial</td>
+                                    <td>{{ protein.antimicrobial }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Half Life</td>
+                                    <td>{{ protein.half_life }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% for dock in dock %}
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-20">
+            <div class="panel panel-primary">
+                <div class="panel-heading" align="center" style="background-color: #006dc1;" >
+                    AMP-Target protein docking
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-4 col-xs-13">
+            <div class="panel panel-default" style="height: 400px;">
+                <div class="panel-heading">
+                    {{ dock.pdb_structure_name }}
+                </div>
+                <div class="container-fluid"></div>
+                <div id="docking">
+                    <div class="nav nav-tabs content-center">
+                        <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+                        <div id="container-02" class="mol-container"></div>
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+                        <script>
+                            jQuery(function() {
+                                let element = jQuery("#container-02");
+                                let config = {
+                                    backgroundColor: "White",
+
+                                };
+                                let viewer = $3Dmol.createViewer(element, config);
+                                let pdbUri = '/static/dock-pdb/{{ dock.pdb_structure_name }}';
+                                jQuery.ajax(pdbUri, {
+                                    success: function(data) {
+                                        let v = viewer;
+                                        v.addModel(data, "pdb"); /* load data */
+                                        v.setStyle({
+                                            chain: 'A'
+                                        }, {
+                                            cartoon: {
+                                                color: "#60399d" // Replace with the desired color for Chain A
+                                            }
+                                        });
+
+                                        // Set style for Chain B
+                                        v.setStyle({
+                                            chain: 'B'
+                                        }, {
+                                            cartoon: {
+                                                color: "#de9a1f" // Replace with the desired color for Chain B
+                                            }
+                                        }); /* style all atoms */
+                                        // Set style for Chain B
+                                        v.setStyle({
+                                            chain: 'P'
+                                        }, {
+                                            cartoon: {
+                                                color: "#de9a1f" // Replace with the desired color for Chain B
+                                            }
+                                        });
+                                        v.zoomTo(); /* set camera */
+                                        v.render(); /* render scene */
+                                        v.zoom(1.2, 1000); /* slight zoom */
+                                    },
+                                    error: function(hdr, status, err) {
+                                        console.error("Failed to load PDB " + pdbUri + ": " + err);
+                                    },
+                                });
+                            });
+                        </script>
+
+
+                        <div class="container-fluid physico-chemical-property-container m-t-50" align="left" style="position: relative;">
+                            <div>
+                                <a style="background-color: #35718A; color: #f9f9f9; margin: 20px; margin-left: -10px;" role="button" href='/static/dock-pdb/{{ dock.pdb_structure_name }}' download='/static/dock-pdb/{{ dock.pdb_structure_name }}' class="btn btn-light text-dark ml-0">Download PDB
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- First panel goes here -->
+        </div>
+
+        <div class="col-md-6 col-sm-5 col-xs-10">
+            <div class="panel panel-success" style="height: 400px;">
+                <div class="panel-heading">
+                    {{dock.ligplot}}
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <div id="owl-demo" class="owl-carousel owl-theme">
+                            <div class="item">
+                                <img src="{% static 'Ligplot/'|add:dock.ligplot %}" alt="Dock Image" style="margin-left: -50px;">
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+        $('.owl-carousel').owlCarousel({
+            loop: true,
+            margin: 10,
+            nav: true,
+            responsive: {
+                600: {
+                    items: 1
+                }
+            }
+        })
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            $("#owl-demo").owlCarousel({
+
+                navigation: true, // Show next and prev buttons
+
+                slideSpeed: 300,
+                paginationSpeed: 400,
+
+                items: 1,
+                itemsDesktop: false,
+                itemsDesktopSmall: false,
+                itemsTablet: false,
+                itemsMobile: false
+
+            });
+
+        });
+    </script>
+
+    <style>
+        hr {
+            border: none;
+            border-top: 1px solid #5f5e5e;
+            /* change color as needed */
+            margin: 20px 0;
+        }
+    </style>
+
+    <section>
+        <div class="col-md-13 col-sm-13 col-xs-18">
+            <div class="panel panel-success" style="height: 150px;">
+                <div class="panel-heading">
+                    Docking Scores
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Avg. RMSD
+                                        <sup><i style="color: rgb(0, 0, 0);" class="fas fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="Root Mean Square Deviation with a 4˚A criteria was used to clusterize Cα protein backbone atoms"></i>
+                                            </sup>
+                                    </th>
+                                    <th>Lowest RMSD
+                                        <sup><i style="color: rgb(0, 0, 0);" class="fas fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="DFIRE energy scores for the top five docking structure clusters. Higher scores signify more optimal solutions"></i>
+                                            </sup>
+                                    </th>  
+                                    <th>Binding Energy
+                                        <sup><i style="color: rgb(0, 0, 0);" class="fas fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="DFIRE energy scores for the top five docking structure clusters. Higher scores signify more optimal solutions"></i>
+                                            </sup>
+                                    </th>                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{dock.avg_rmsd}}</td>
+                                    <td>{{dock.lowest_rmsd}}</td>
+                                    <td>{{dock.binding_energy}}</td>
+                                </tr>
+
+                                <script>
+                                    function convertToCSV(rows) {
+                                        var csv = [];
+
+                                        for (var i = 0; i < rows.length; i++) {
+                                            var row = [];
+                                            var cells = rows[i].getElementsByTagName('td');
+
+                                            for (var j = 0; j < cells.length; j++) {
+                                                row.push(cells[j].innerText);
+                                            }
+
+                                            csv.push(row.join(','));
+                                        }
+
+                                        return csv.join('\n');
+                                    }
+
+                                    function downloadCSV(csv, filename) {
+                                        var csvFile = new Blob([csv], {
+                                            type: 'text/csv'
+                                        });
+                                        var downloadLink = document.createElement('a');
+
+                                        downloadLink.download = filename;
+                                        downloadLink.href = window.URL.createObjectURL(csvFile);
+                                        downloadLink.style.display = 'none';
+
+                                        document.body.appendChild(downloadLink);
+                                        downloadLink.click();
+                                        document.body.removeChild(downloadLink);
+                                    }
+
+                                    function exportTableToCSV(filename) {
+                                        var rows = document.querySelectorAll('.table tbody tr');
+                                        var csv = convertToCSV(rows);
+
+                                        downloadCSV(csv, filename);
+                                    }
+                                </script>
+                                <script>
+                                    function convertToXML(rows) {
+                                        var xml = '<?xml version="1.0" encoding="UTF-8"?>\n<Table>\n';
+
+                                        for (var i = 0; i < rows.length; i++) {
+                                            var cells = rows[i].getElementsByTagName('td');
+                                            xml += '  <Row>\n';
+
+                                            for (var j = 0; j < cells.length; j++) {
+                                                var cellValue = cells[j].innerText;
+                                                var cellTag = '    <Cell' + j + '>' + cellValue + '</Cell' + j + '>\n';
+                                                xml += cellTag;
+                                            }
+
+                                            xml += '  </Row>\n';
+                                        }
+
+                                        xml += '</Table>';
+                                        return xml;
+                                    }
+
+                                    function downloadXML(xml, filename) {
+                                        var xmlFile = new Blob([xml], {
+                                            type: 'application/xml'
+                                        });
+                                        var downloadLink = document.createElement('a');
+
+                                        downloadLink.download = filename;
+                                        downloadLink.href = window.URL.createObjectURL(xmlFile);
+                                        downloadLink.style.display = 'none';
+
+                                        document.body.appendChild(downloadLink);
+                                        downloadLink.click();
+                                        document.body.removeChild(downloadLink);
+                                    }
+
+                                    function exportTableToXML(filename) {
+                                        var rows = document.querySelectorAll('.table tbody tr');
+                                        var xml = convertToXML(rows);
+
+                                        downloadXML(xml, filename);
+                                    }
+                                </script>
+                                <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+                                <script>
+                                    function exportTableToPDF(filename) {
+                                        var doc = new jsPDF();
+                                        var table = document.querySelector('.table');
+                                        var rows = table.querySelectorAll('tbody tr');
+
+                                        var header = [];
+                                        var data = [];
+
+                                        // Extract table header
+                                        var headerCells = table.querySelectorAll('thead th');
+                                        headerCells.forEach(function(cell) {
+                                            header.push(cell.innerText);
+                                        });
+
+                                        // Extract table data
+                                        rows.forEach(function(row) {
+                                            var rowData = [];
+                                            var cells = row.querySelectorAll('td');
+                                            cells.forEach(function(cell) {
+                                                rowData.push(cell.innerText);
+                                            });
+                                            data.push(rowData);
+                                        });
+
+                                        doc.autoTable({
+                                            head: [header],
+                                            body: data,
+                                        });
+
+                                        doc.save(filename + '.pdf');
+                                    }
+                                </script>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        </div>
+        </div>
+    </section>
+
+
+    </div>
+
+    </div>
+    </div>
+    </div>
+    </div>
+
+    </div>
+
+
+    <style>
+        #container-02 {
+            width: 90%;
+            height: 300px;
+            position: relative;
+            left: 10px;
+            top: 20px;
+            right: 500px;
+        }
+        
+        .button {
+            position: absolute;
+            top: 80%;
+            left: 80%;
+        }
+    </style>
+
+
+    <script>
+        function download(content, fileName, contentType) {
+            const a = document.createElement("a");
+            const file = new Blob([content], { type: contentType });
+            a.href = URL.createObjectURL(file);
+            a.download = fileName;
+            a.click();
+        }
+
+        function exportTableToCSV(filename) {
+            const csv = [];
+            const rows = document.querySelectorAll("table tr");
+            for (const row of rows) {
+                const cols = row.querySelectorAll("td, th");
+                const rowContent = Array.from(cols).map(col => col.innerText).join(",");
+                csv.push(rowContent);
+            }
+            download(csv.join("\n"), filename, "text/csv");
+        }
+
+        function exportTableToXML(filename) {
+            let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<AMPData>\n';
+            const rows = document.querySelectorAll("table tr");
+            rows.forEach(row => {
+                const cols = row.querySelectorAll("td, th");
+                if (cols.length > 0) {
+                    xml += '  <AMP>\n';
+                    cols.forEach((col, i) => {
+                        const colName = rows[0].querySelectorAll("th")[i].innerText;
+                        xml += `    <${colName}>${col.innerText}</${colName}>\n`;
+                    });
+                    xml += '  </AMP>\n';
+                }
+            });
+            xml += '</AMPData>';
+            download(xml, filename, "application/xml");
+        }
+    </script>
+
+</body>
+
+{% endfor %}
+{% endblock %}

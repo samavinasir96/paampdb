@@ -1,0 +1,195 @@
+{% extends './base.html' %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+    /* Generic Styling, for Desktops/Laptops */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 150px;
+    }
+
+    /* Zebra striping */
+    tr:nth-of-type(odd) {
+        background: #eee;
+    }
+
+    th {
+        background: #35718A;
+        color: white;
+        font-weight: bold;
+    }
+
+    td,
+    th {
+        padding: 4px;
+        border: 1px solid #ccc;
+        text-align: left;
+    }
+
+    .alert {
+        position: relative;
+        top: 180px;
+        /* adjust the top value as needed */
+    }
+
+    .blink_me {
+        animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+    }
+
+    @keyframes blinker {
+        to {
+            opacity: 0;
+        }
+    }
+
+    .back-widget-set {
+        background-color: transparent;
+        height: min-content;
+        font-size: 8px;
+    }
+
+    .panel-success {
+        border-color: #d6e9c6;
+    }
+
+    th {
+        background: #35718A;
+        color: rgb(255, 255, 255);
+        font-weight: normal;
+        font-size: small;
+    }
+
+    body {
+        padding-top: -30px;
+        margin-top: -10px;
+    }
+
+    hr {
+        border: 1px solid #4D5061;
+        margin: 10px 0;
+    }
+
+    .search-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 50%;
+        max-width: 400px;
+        box-sizing: border-box;
+        color: #333;
+        background-color: #fff;
+    }
+
+    .search-button {
+        padding: 8px 15px;
+        background-color: #4CAF50;
+        /* Green color */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 10px;
+        /* Add some spacing between the input and button */
+    }
+
+    .search-button:hover {
+        background-color: #45a049;
+        /* Darker green on hover */
+    }
+</style>
+
+<body>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="panel panel-success"></div>
+
+        <table class="table table-striped w-auto">
+            <thead>
+                <tr>
+                    <th colspan="6" style="text-align: left;">
+                        <div class="search-container">
+                            <input type="text" class="search-input" id="searchInput" placeholder="Search by AMP Name or AMP-Sequence">
+                            <button class="search-button" onclick="search()">Search</button>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th scope="col">select AMP</th>
+                    <th scope="col">AMP name</th>
+                    <th scope="col">AMP-Sequence</th>
+                    <th scope="col" style="padding-left: 20px;"> Select Target protein</th>
+                    <th scope="col">Submit</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for protein in proteins %}
+                <tr class="table-info">
+                    <td> AMP{{ protein.id }}
+                    </td>
+                    <td>{{ protein.name }}</td>
+                    <td>{{ protein.sequence}}</td>
+                    <td>
+                        <select class="mySelect" name="dropdown" onchange="updateHiddenInput(this, {{ protein.id }})" required>
+                            <option value="" disabled selected>Select an option</option>
+                            {% for target in targets %}
+                            <option value="{{ target.id }}">{{ target.target_protein }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <form class="form-inline" method="POST" action="{% url 'create_protein' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="protein_id" value="{{ protein.id }}">
+                            <input type="hidden" name="target_id" id="hidden_target_id_{{ protein.id }}">
+                            <input type="submit" value="Submit">
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function updateHiddenInput(selectElement, proteinId) {
+            var hiddenInput = document.getElementById('hidden_target_id_' + proteinId);
+            hiddenInput.value = selectElement.value;
+            console.log("hiddenInput.value:", hiddenInput.value);
+        }
+
+        function search() {
+            // Get the value from the search input
+            var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            // Get all table rows
+            var rows = document.querySelectorAll('tbody tr');
+
+            // Loop through each row and hide those that don't match the search term
+            rows.forEach(function(row) {
+                // Get the AMP name and AMP sequence cells' text content
+                var ampName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                var ampSequence = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+
+                // Check if the search term is found in the AMP name or AMP sequence
+                if (ampName.includes(searchTerm) || ampSequence.includes(searchTerm)) {
+                    // Show the row if the search term is found
+                    row.style.display = '';
+                } else {
+                    // Hide the row if the search term is not found
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
+    <section>
+        <hr />
+    </section>
+</body>
+{% endblock %}

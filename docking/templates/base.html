@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+
+<style>
+    .navbar-top {
+        background: #35718A;
+        border-bottom: 4px solid #60B078;
+        color: #FFF;
+        color: rgb(255, 255, 255);
+    }
+    
+    .nav-link {
+        color: white;
+    }
+    
+    .text-white {
+        color: #fff;
+    }
+    
+    .navbar-doublerow>.navbar {
+        display: block;
+        padding: 0px auto;
+        margin: 0px auto;
+        min-height: 25px;
+    }
+    
+    .navbar-doublerow .navbar-top ul>li:first-child>a {
+        color: #fff;
+    }
+    
+    .navbar-doublerow .navbar-top ul>li:nth-child(2)>a {
+        color: #fff;
+    }
+    
+    .navbar-doublerow .navbar-top ul>li:nth-child(3)>a {
+        color: #fff;
+    }
+    /*Down nav*/
+    
+    .navbar-doublerow .navbar-down .navbar-brand {
+        /*navbar brand*/
+        padding: 0px auto;
+        float: left;
+        color: #60B078;
+        font-size: 30px;
+    }
+    
+    .navbar-doublerow .navbar-down ul>li>a {
+        /*Menu items*/
+        font-size: 12.5px;
+        color: #000;
+    }
+    
+    .navbar-doublerow .navbar-down ul>li>a:hover {
+        /*menu hover*/
+        border-bottom: 1px solid #000000;
+        color: #000000;
+    }
+    
+    .navbar-brand {
+        position: absolute;
+        left: 10%;
+        margin-top: -12px;
+        /* position the brand at the center of the navbar */
+        transform: translateX(-50%);
+    }
+</style>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<nav class="navbar navbar-default navbar-doublerow navbar-trans navbar-fixed-top">
+    <!-- Master nav -->
+    <!-- top nav -->
+    <nav class="navbar navbar-top">
+
+        <div class="container">
+            <!-- left nav top -->
+            <ul class="nav navbar-nav pull-left">
+                <li>
+                    <a class="nav-link" href=" {% url 'tutorial' %}">Tutorials</a></li>
+                <li><a class="nav-link " href="{% url 'about_us' %}">About Us</a></li>
+                <li><a class="nav-link " href="{% url 'contact' %}">Contact</a></li>
+            </ul>
+            <!-- right nav top -->
+        </div>
+
+    </nav>
+    <!-- down nav -->
+    <nav class="navbar navbar-down ">
+        <div class="container ">
+            <div class="flex-container ">
+                <div class="navbar-header flex-item ">
+                    <button type="button " class="navbar-toggle collapsed " data-toggle="collapse " data-target="#navbar-collapse ">
+                        <span class="sr-only ">Toggle navigation</span>
+                        <span class="icon-bar "></span>
+                        <span class="icon-bar "></span>
+                        <span class="icon-bar "></span>
+                    </button>
+                    <a class="navbar-brand " href="{% url 'index' %} ">
+
+                        <img src="{% static 'PAAMP_Logo.png' %} " width="50 ">
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse " id="navbar-collapse ">
+                    <ul class="nav navbar-nav flex-item hidden-xs navbar-right ">
+                        <li><a href="{% url 'search' %} " data-toggle="tab">Select AMP-Target protein</a></li>
+
+                        <li><a href="{% url 'stats' %} " data-toggle="tab">Statistics</a></li>
+
+
+                    </ul>
+                </div>
+
+                </ul>
+            </div>
+        </div>
+        </div>
+    </nav>
+</nav>
+
+<!-- /master nav -->
+
+<div class="bg "></div>
+<div class="container ">
+
+    {% block content %} {% endblock %}
+
+</div>
+</div>
+</div>
+<section>
+    <div>
+        <footer class="footer" style="margin: 0; padding: 0; padding-bottom: 0; margin-top: 0; ">
+            <p> | &copy; 2024 Microbial Genomics & Bioinformatics |<br> Integrative Biology Laboratory, Atta-ur-Rahman School of Applied Biosciences (ASAB), <br> National University of Sciences and Technology (NUST) Islamabad.</p>
+            </footer>
+            </p>
+
+
+        </footer>
+        <style>
+            .footer {
+                position: relative;
+                bottom: 0;
+                width: 100%;
+                height: 50%;
+                background-color: #000000;
+                color: white;
+                font-size: 14px;
+                padding: 10px;
+                text-align: center;
+            }
+        </style>
+    </div>
+</section>
+<script>
+    // Define breakpoints for small, medium, and large screens
+    const breakpoints = {
+        small: '(max-width: 600px)',
+        medium: '(min-width: 600px) and (max-width: 991px)',
+        large: '(min-width: 992px)'
+    }
+
+    // Get the navbar items
+    const navbarItems = document.querySelectorAll('.navbar-down ul.navbar-nav li')
+
+    // Add event listener to the window to check for screen size changes
+    window.addEventListener('resize', handleScreenSize)
+
+    // Call the function on page load to apply initial styles
+    handleScreenSize()
+
+    function handleScreenSize() {
+        // Loop through the navbar items
+        navbarItems.forEach(item => {
+            // Check the screen size and apply styles accordingly
+            if (window.matchMedia(breakpoints.small).matches) {
+                // Small screen styles
+                item.style.width = '100%'
+                item.style.textAlign = 'center'
+                item.style.borderBottom = '1px solid #eee'
+            } else if (window.matchMedia(breakpoints.medium).matches) {
+                // Medium screen styles
+                item.style.width = '50%'
+                item.style.textAlign = 'center'
+                item.style.borderBottom = 'none'
+            } else if (window.matchMedia(breakpoints.large).matches) {
+                // Large screen styles
+                item.style.width = 'auto'
+                item.style.textAlign = 'left'
+                item.style.borderBottom = 'none'
+            }
+        })
+    }
+</script>

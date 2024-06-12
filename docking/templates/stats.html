@@ -1,0 +1,119 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+
+<h1>
+    <center>
+        Statistics
+        <h5>
+            (Total 30 AMPs were evaluated from screening of literature and interact with 30 target proteins)
+        </h5>
+        <h5>
+            Relative AntiMicrobial Score(RAMS) = C+H+Hm+Ha+pI+aI+Inst+BomI/Max score
+            <td>&nbsp;</td><br><br> Absolute RAMS (ARAMS) = RAMS X L
+
+        </h5>
+    </center>
+</h1>
+
+<style>
+    .h1,
+    h1 {
+        font-size: 2.5rem;
+    }
+</style>
+<table border="1" align="center">
+    <tr>
+        <th colspan="2"></th>
+    </tr>
+    <tr>
+        <th>Graph</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Hemolytic_activity.jpg' %}" width="900"></img>
+        </td>
+        <td>Threshold value for Hemolytic activity is between 0-1 and all AMPs were fall in this category</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/MIC.jpg' %}" width="900"></img>
+        </td>
+        <td>MIC value for all the selected AMPs have been reported between 0.5-256</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Solubility.jpg' %}" width="900"></img>
+        </td>
+        <td>Highly soluble peptides help in purification processes and all AMPs are highly soluble</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Molecular weight.jpg' %}" width="900"></img>
+        </td>
+        <td>Standard value for peptide is
+            <10KDa and all the peptides were fall at <5KDa</td>
+                <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Length.jpg' %}" width="900"></img>
+        </td>
+        <td>Optimum length of a peptide falls below
+            <45</td>
+                <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/charge.jpg' %}" width="900"></img>
+        </td>
+        <td>All peptides were cationic except one</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Isoelectric point.jpg' %}" width="900"></img>
+        </td>
+        <td>Distribution of Isoelectric point from experimentally verified dataset of AMPs</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Aliphatic index.jpg' %}" width="900"></img>
+        </td>
+        <td>High Aliphatic index of Selected AMPs</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Instability index.jpg' %}" width="900"></img>
+        </td>
+        <td>Instability Index distribution of AMPs</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Boman Index.jpg' %}" width="900"></img>
+        </td>
+        <td>The potential protein interaction index of AMPs and only one show higher Boman Index that does not fall in the category of potential proteins</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Amphipathicity.jpg' %}" width="900"></img>
+        </td>
+        <td>Threshold value for very hydrophobic peptides according to Eisenberg scale is ≥ 0.68 and 4 peptides showed their very hydrophobic nature. The 1 peptide showed Transmembrane ability due to value close to Threshold value i.e. ± 0.42 and 23 were
+            shown to moderately hydrophobic because of their predicted values close to ±1.10. Most of the AMPs showed hydrophobic and hydrophilic property</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Hydrophobic moment.jpg' %}" width="900"></img>
+        </td>
+        <td>Hydrophobic moment of AMPs showed higher Hydrophobic moment</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/RMSF.jpg' %}" width="900"></img>
+        </td>
+        <td>All peptides have high Root Mean Square Fluctuation values</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+    <tr>
+        <td><img src="{% static 'img/stats/Flexibility.jpg' %}" width="900"></img>
+        </td>
+        <td>All peptides are flexible</td>
+        <!-- considering it is on the same folder that .html file -->
+    </tr>
+</table>
+{% endblock %}

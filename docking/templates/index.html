@@ -1,0 +1,97 @@
+<!doctype html> {% if csrf_token %} {% load static %}
+
+<style>
+.normal-text {
+    font-weight: normal;
+}
+
+.custom-color {
+    background-color: #35718A!important; /* Dark blue color */
+    border-color: #35718A!important; /* Dark blue color */
+}
+.custom-color:hover,
+.custom-color:focus,
+.custom-color:active {
+    background-color: #35718A!important; /* Darker blue color on hover, focus, and active states */
+    border-color: #35718A!important;/* Darker blue color on hover, focus, and active states */
+}
+
+</style>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="container">
+        
+        <br>
+        <link rel="stylesheet" type="text/css" href="{% static 'abampdb/abampdb/style.css' %}">
+        <center><img src="{% static 'PAAMP_Logo.png' %}" width="30%" height="20%"></center><br>
+        <div class="cover" style="background-image: url({% static 'amp.jpg' %});
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: bottom;">
+
+
+            
+
+            <h5 class="text-center"><br><span class="normal-text">PAAMPdb is a curated database resource specializing in antimicrobial peptides (AMPs) tailored to combat <em>Pseudomonas aeroginosa</em>. The database offers detailed experimental insights into reported AMPs, including their antimicrobial effectiveness, range of homology structural models, and residue level interactions of AMPs with target proteins.</span><br><br></h5>
+
+            <br><br> <!-- Add space before -->
+            <center><a href="{% url 'search' %}" class="btn btn-primary btn-md active custom-color" role="button" aria-pressed="true">Enter PAAMPdb</a></center>
+            <br> <!-- Add space after -->
+
+
+
+            {% else %}
+            <p>Page unavailable. Pleasse try again soon.</p>
+            {% endif %}
+        </div>
+
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </div>
+    <section>
+        <div>
+            <footer class="footer">
+                <p> | &copy; 2024 Microbial Genomics & Bioinformatics |<br> Integrative Biology Laboratory, Atta-ur-Rahman School of Applied Biosciences (ASAB), <br> National University of Sciences and Technology (NUST) Islamabad.</p>
+            </footer>
+            <style>
+                .footer {
+                    position: fixed;
+                    bottom: -15px;
+                    width: 100%;
+                    background-color: #000000;
+                    color: white;
+                    font-size: 14px;
+                    text-align: center;
+                    padding: 0px 0;
+                }
+                
+                @media only screen and (max-width: 600px) {
+                    /* Adjust footer styles for small screens */
+                    .footer {
+                        font-size: 12px;
+                    }
+                }
+                
+                @media only screen and (max-width: 400px) {
+                    /* Further adjustments for smaller screens */
+                    .footer {
+                        font-size: 10px;
+                    }
+                }
+            </style>
+        </div>
+    </section>
+
+</body>
+
+</html>

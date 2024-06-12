@@ -1,0 +1,42 @@
+<h1>result</h1>
+<form class="form-inline" method="POST" action="/protein/">
+    <label for="q">Search:</label> {{ form.as_p }} {% csrf_token %}
+
+    <input type="text" name="q" placeholder="Search...">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="panel panel-success"></div>
+
+        <table class="table table-striped w-auto">
+            <thead>
+                <tr>
+                    <td>
+                        <label>Select a category</label>
+                        <select name="category" class="form-control select2">
+        <option value='none'>Select a category...</option>
+
+        {% for d in docks %}
+        <option value='{{ d.dock_1 }}'>{{ d.dock_1 }}</option>
+        {% endfor %}
+    </select>
+                        <td><button type="submit" class="btn btn-link">View</button></td>
+                        <!-- </div> -->
+                    </td>
+                </tr>
+                <script>
+                    $(document).ready(function() {
+                        $('.select2').select2({
+                            placeholder: "Select a category...",
+                            allowClear: true
+                        });
+                    });
+                </script>
+        </table>
+</form>
+
+{% if protein.name %}
+<ul>
+    <li>{{ protein }}</li>
+    <li>charge: {{ protein.charge }}</li>
+    <li>length: {{ protein.length }}</li>
+</ul>
+{% else %} {{ protein }} no such protein '{{ object.query_id }}' {% endif %}

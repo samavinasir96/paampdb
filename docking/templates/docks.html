@@ -1,0 +1,72 @@
+{% extends './base.html' %} {% block content %}
+
+
+<style>
+    body {
+        padding-top: 200px;
+    }
+</style>
+
+
+<style>
+    /* 
+Generic Styling, for Desktops/Laptops 
+*/
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 200px;
+    }
+    /* Zebra striping */
+    
+    tr:nth-of-type(odd) {
+        background: #eee;
+    }
+    
+    th {
+        background: #333;
+        color: white;
+        font-weight: bold;
+    }
+    
+    td,
+    th {
+        padding: 6px;
+        border: 1px solid #ccc;
+        text-align: left;
+    }
+</style>
+<!--Table-->
+<form class="form-inline" method="POST" action=""></form>
+{% csrf_token %} {{ form.as_p }}
+<table class="table table-striped w-auto">
+
+    <!--Table head-->
+    <thead>
+
+        <tr>
+            <td>
+                <select id="mySelect">
+	<option value="">Select an option...</option>
+	{% for dock in dock_list %}
+	  <option value="{{ dock.id }}">{{ dock.dock_1 }}</option>
+	{% endfor %}
+  </select>
+            </td>
+            <script>
+                var selectElement = document.getElementById("mySelect");
+                selectElement.addEventListener("change", function() {
+                    var selectedValue = this.value;
+                    if (selectedValue) {
+                        var url = "{% url 'abampdb:show-dock' 0 %}".replace("0", selectedValue);
+                        window.location.href = url;
+                    }
+                });
+            </script>
+            </form>
+            </td>
+        </tr>
+
+
+        {% endblock %}
